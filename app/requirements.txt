@@ -1,0 +1,9 @@
+pandas
+scikit-learn
+lightgbm
+joblib
+matplotlib
+streamlit
+google-cloud-storage
+google-cloud-bigquery
+shap
