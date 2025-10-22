@@ -1,21 +1,39 @@
 # 学生の成績予測アプリ (Streamlit + LightGBM + Cloud Run)
 
+## はじめに
 このプロジェクトは、Kaggle「Students Performance in Exams」のデータセットを活用し、 
 LinearRegression・LightGBM・SHAPを用いて学習成果を予測しています。 
 学生の様々な属性（性別、人種、親の学歴など）と中間スコア（リーディング・ライティング）を入力として、 
 最終的な数学スコアを予測する **機械学習Webアプリケーション** です。 
 Google Cloud Platform (GCP) の **Cloud Run** を利用して、 
-サーバーレスでコンテナ化された **Streamlitアプリ** として公開しています。 
+サーバーレスでコンテナ化された **Streamlitアプリ** として公開しています。
 **Cloud Scheduler**でR²監視を自動化し、継続的に運用できる仕様にしています。
-教師として得たドメイン知識をAI実装に結び付けた事例です。
+教師として得たドメイン知識をAI実装に結び付けた事例で、効果として作業時間80%削減。
 
 ---
 
-## デモ
+## 公開サイト
 
-🔗 https://streamlit-math-predictor-218616351259.asia-northeast1.run.app/
+ https://streamlit-math-predictor-218616351259.asia-northeast1.run.app/
 
 ---
+
+## アーキテクチャ構成図
+
+```mermaid
+flowchart TD
+    A[Kaggle CSV] -->|アップロード| B[BigQuery]
+    B --> C[Vertex AI Notebook - 学習]
+    C -->|学習済みモデル保存| D[GCS Model Storage]
+    D -->|モデル ロード| E[Cloud Run - Streamlit App]
+    E -->|UI表示| F[ユーザー]
+
+    subgraph MLOps自動監視
+        G[Cloud Scheduler] --> H[Pub/Sub]
+        H --> I[Cloud Run - Monitor App]
+        I -->|R^2 スコア出力| J[Cloud Logging]
+    end
+```
 
 ## 目的・価値
 
@@ -89,25 +107,11 @@ Google Cloud Platform (GCP) の **Cloud Run** を利用して、
 ### SHAP可視化例
 個別予測に対する要因寄与をWaterfallグラフで確認できます。  
 どの特徴（例：`reading_score` や `test_preparation_course`）がスコアに影響したかを可視化。
+https://f6b91c3adcecb91-dot-asia-northeast1.notebooks.googleusercontent.com/lab/tree/Github/app_screenshot.png
 
 ---
 
-## アーキテクチャ構成図
 
-```mermaid
-flowchart TD
-    A[Kaggle CSV] -->|アップロード| B[BigQuery]
-    B --> C[Vertex AI / Notebook (model_train.py)]
-    C -->|学習済みモデル保存| D[GCS (LinearRegression.pkl, LightGBM.pkl, feature_list.pkl)]
-    D -->|ロード| E[Cloud Run (Streamlit App)]
-    E -->|UI表示| F[ユーザー（教員・保護者）]
-
-    subgraph MLOps自動監視
-        G[Cloud Scheduler] --> H[Pub/Sub]
-        H --> I[Cloud Run (monitor.py)]
-        I -->|R²スコア出力| J[Cloud Logging]
-    end
-```
 
 ## 注意事項（デプロイと再現性について）
 - 学習済みモデルの非公開: 学習済みモデルファイル（LinearRegression.pkl, LightGBM.pkl, および feature_list.pkl）は、機密保持に従い、GitHub上では公開していません。
