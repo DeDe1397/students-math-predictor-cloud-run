@@ -1,14 +1,16 @@
 # 学生の成績予測アプリ (Streamlit + LightGBM + Cloud Run)
 
 ## はじめに
-このプロジェクトは、Kaggle「Students Performance in Exams」のデータセットを活用し、 
-LinearRegression・LightGBM・SHAPを用いて学習成果を予測しています。 
-学生の様々な属性（性別、人種、親の学歴など）と中間スコア（リーディング・ライティング）を入力として、 
-最終的な数学スコアを予測する **機械学習Webアプリケーション** です。 
-Google Cloud Platform (GCP) の **Cloud Run** を利用して、 
-サーバーレスでコンテナ化された **Streamlitアプリ** として公開しています。
-**Cloud Scheduler**でR²監視を自動化し、継続的に運用できる仕様にしています。
-教師として得たドメイン知識をAI実装に結び付けた事例で、効果として作業時間80%削減。
+
+- Kaggle「Students Performance in Exams」のデータセットを活用
+- LinearRegression・LightGBM・SHAPを用いて学習成果を予測 
+- 学生の様々な属性（性別、人種、親の学歴など）と中間スコア（リーディング・ライティング）を入力 
+- 最終的な数学スコアを予測する **機械学習Webアプリケーション** 
+- Google Cloud Platform (GCP) の **Cloud Run** を利用
+- サーバーレスでコンテナ化された **Streamlitアプリ** として公開
+- **Cloud Scheduler**でR²監視を自動化し、継続的に運用
+- 教師として得たドメイン知識をAI実装に結び付けた事例
+- 効果:作業時間80%削減
 
 ---
 
@@ -107,7 +109,7 @@ flowchart TD
 ### SHAP可視化例
 個別予測に対する要因寄与をWaterfallグラフで確認できます。  
 どの特徴（例：`reading_score` や `test_preparation_course`）がスコアに影響したかを可視化。
-https://f6b91c3adcecb91-dot-asia-northeast1.notebooks.googleusercontent.com/lab/tree/Github/app_screenshot.png
+![SHAP可視化](https://f6b91c3adcecb91-dot-asia-northeast1.notebooks.googleusercontent.com/lab/tree/Github/app_screenshot.png)
 
 ---
 
