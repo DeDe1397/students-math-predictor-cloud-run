@@ -13,8 +13,9 @@ WORKDIR /app
 COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
-# --- 5. アプリのコピー ---
+# --- 5. アプリのコピー（学習済みモデルを含む） ---
 COPY app.py .
+COPY models/ ./models/
 
 # --- 6. Streamlit実行設定 ---
 EXPOSE 8080

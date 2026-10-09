@@ -3,17 +3,17 @@ import pandas as pd
 import joblib
 import shap
 import matplotlib.pyplot as plt
-from google.cloud import storage
 import os
 import numpy as np
 
 # --- 設定値 ---
-GCS_BUCKET_NAME = "GCS_BUCKET_NAME" #（あなたの環境に合わせて変更） 
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+MODEL_DIR = os.path.join(BASE_DIR, "models", "math_predictor", "v1")
 MODEL_PATHS = {
-    "LinearRegression": "models/math_predictor/v1/LinearRegression.pkl",
-    "LightGBM": "models/math_predictor/v1/LightGBM.pkl"
+    "LinearRegression": os.path.join(MODEL_DIR, "LinearRegression.pkl"),
+    "LightGBM": os.path.join(MODEL_DIR, "LightGBM.pkl"),
 }
-GCS_FEATURE_PATH = f"models/math_predictor/v1/feature_list.pkl"
+FEATURE_PATH = os.path.join(MODEL_DIR, "feature_list.pkl")
 
 
 st.warning("⚠️ このアプリはデモ用です。商用利用は禁止されています。")
@@ -34,19 +34,9 @@ def create_background_data(feature_list, n_samples=100):
 @st.cache_resource
 def load_model_artifacts(model_name):
     try:
-        storage_client = storage.Client()
-        bucket = storage_client.bucket(GCS_BUCKET_NAME)
+        model = joblib.load(MODEL_PATHS[model_name])
+        feature_list = joblib.load(FEATURE_PATH)
 
-        local_model_path = f"{model_name}.pkl"
-        if not os.path.exists(local_model_path):
-            model_blob = bucket.blob(MODEL_PATHS[model_name])
-            model_blob.download_to_filename(local_model_path)
-        model = joblib.load(local_model_path)
-
-        feature_blob = bucket.blob(GCS_FEATURE_PATH)
-        feature_blob.download_to_filename("feature_list.pkl")
-        feature_list = joblib.load("feature_list.pkl")
-        
         background_data = None
         explainer = None
         
@@ -139,5 +129,5 @@ if model is not None:
             st.error("SHAP Explainerの初期化に失敗しました。")
             
 else:
-    st.warning("モデルのロードに失敗しているため、予測を実行できません。GCSバケット名と権限を確認してください。")
+    st.warning(f"モデルのロードに失敗しているため、予測を実行できません。{MODEL_DIR} にモデルファイルが存在するか確認してください。")
 
