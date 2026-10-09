@@ -9,6 +9,10 @@
 - **Streamlit** 単体で動作するスタンドアロン構成（モデルはリポジトリに同梱、外部クラウド接続は不要）
 - 教師として得たドメイン知識をAI実装に結び付けた事例
 
+## 公開サイト
+
+https://students-math-predictor-cloud-run-fafd4dccpaxdk2gdby77lm.streamlit.app/
+
 ---
 
 ## アーキテクチャ構成図
